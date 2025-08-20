@@ -1,0 +1,102 @@
+"""
+Information about a table that can be queried in the database.
+"""
+type TableInfo {
+  """
+  The schema (namespace) the table belongs to.
+  """
+  tableSchema: String!
+
+  """
+  The name of the table.
+  """
+  tableName: String!
+
+  """
+  The size info of the table.
+  """
+  tableSize: TableSizeInfo
+}
+
+"""
+Detailed size statistics for a table.
+"""
+type TableSizeInfo {
+  """
+  The PostgreSQL object identifier (OID) for the table.
+  """
+  oid: String!
+
+  """
+  Estimated number of rows in the table.
+  """
+  rowEstimate: Float!
+
+  """
+  Total disk space used by the table (including toast data) in bytes.
+  """
+  totalBytes: Int!
+
+  """
+  Disk space used by indexes for the table in bytes.
+  """
+  indexBytes: Int!
+
+  """
+  Disk space used by toast tables in bytes.
+  This field is nullable because toast tables may not exist for the table.
+  """
+  toastBytes: Int
+
+  """
+  The name of the schema.
+  """
+  tableSchema: String!
+
+  """
+  The name of the table.
+  """
+  tableName: String!
+}
+
+"""
+Parameters for querying a collection of table size statistics.
+"""
+input TableSizeInput {
+  """
+  SQL‑style pattern (e.g. `public.%`) used to match schema names.
+  """
+  schemaPattern: String! = "%"
+
+  """
+  Optional list of specific table names to return.
+  If omitted or empty, the query will return size info for all matching tables.
+  """
+  tableNames: [String!]
+}
+
+"""
+Parameters for querying a collection of tables.
+"""
+input TablesInput {
+  """
+  SQL‑style pattern to match schema names.
+  """
+  schemaPattern: String! = "%"
+
+  """
+  SQL‑style pattern to match table names.
+  """
+  tablePattern: String! = "%"
+}
+
+"""
+Root query type – expose whatever endpoints you need.
+These are only illustrative; feel free to add more fields or mutations as required.
+"""
+type Query {
+  """
+  Return a list of tables matching the supplied patterns.
+  """
+  tables(input: TablesInput!): [TableInfo!]!
+}
